@@ -3,12 +3,13 @@
 defined('IS_DEVELOPMENT') OR exit('No direct script access allowed');
 
 require '/var/www/vendor/autoload.php';
+require '/var/www/mongodb_jelly_pop.php';
 
 
 // get mongodb object database
 function get_mongodb($is_development = false) {
 
-    require '/var/www/mongodb_jelly_pop.php';
+    global $config;
 
     $database = $is_development == true ? $config['database_dev'] : $config['database'];
 
