@@ -38,7 +38,7 @@ foreach ($result['topPlayer'] as $k=>$v) {
     $i++;
 }
 
-$url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=371475076265908%7C16006ef2fbbc5d9466cf2dad4f688642";
+$url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=" . $config['facebook_token'];
 $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
 
