@@ -7,7 +7,9 @@ define('JELLY_POP_TOKEN', '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 function show_error($response_code, $status_code, $message) {
     http_response_code($response_code);
-    include("error.php");
+    header('Content-Type: application/json');
+    echo json_encode(array('status_code' => $status_code, 'message' => $message));
+//    include("error.php");
     die;
 }
 
@@ -45,7 +47,11 @@ switch ($service) {
         }
         $input = file_get_contents("php://input");
 //        include('score.php');
-        include($service.'.php');
+        try {
+            $service_result = include($service.'.php');
+        } catch (Exception $ex) {
+            show_error(500, "500 Internal Server Error", $ex->getMessage());
+        }
         break;
     case 'friend_score' :
 //        if ($_SERVER["REQUEST_METHOD"] != 'GET') {
@@ -64,10 +70,21 @@ switch ($service) {
             show_error(405, "405 Method Not Allowed", "Invalid Method");
         }
 //        include('country_score.php');
-        include($service.'.php');
+        try {
+            $service_result = include($service.'.php');
+        } catch (Exception $ex) {
+            show_error(500, "500 Internal Server Error", $ex->getMessage());
+        }
         break;
     default :
         show_error(503, "503 Service Unavailable", "Invalid Service");
 }
 
+$end_time = microtime(true);
 
+$service_result['execution_time'] = number_format($end_time - $start_time, 5);
+$service_result['memory_usage'] = memory_get_usage(true);
+
+header('Content-Type: application/json');
+
+echo json_encode($service_result);

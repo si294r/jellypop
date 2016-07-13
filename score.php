@@ -21,4 +21,6 @@ if (is_object($document)) {
     $db->User->insertOne($data);
 }
 
-echo json_encode(array("status" => TRUE));
+//echo json_encode(array("status" => TRUE));
+
+return array("status" => TRUE);
