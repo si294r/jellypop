@@ -13,14 +13,19 @@ $data['score'] = isset($json->score) ? $json->score : 0;
 
 $document = $db->User->findOne([ 'facebook_id' => $data['facebook_id'] ]);
 
+$affected_row = 0;
 if (is_object($document)) {
-    $data['updated_date'] = date('Y-m-d H:i:s');
-    $db->User->updateOne(['_id' => bson_oid((string) $document->_id)], ['$set' => $data]);
+    if ($data['score'] > $document->score) {
+        $data['updated_date'] = date('Y-m-d H:i:s');
+        $db->User->updateOne(['_id' => bson_oid((string) $document->_id)], ['$set' => $data]);
+        $affected_row = 1;
+    }
 } else {
     $data['created_date'] = date('Y-m-d H:i:s');
     $db->User->insertOne($data);
+    $affected_row = 1;
 }
 
 //echo json_encode(array("status" => TRUE));
 
-return array("status" => TRUE);
+return array("status" => TRUE, "affected_row" => $affected_row);

@@ -25,4 +25,4 @@ if (is_object($document)) {
 
 //echo json_encode(array("status" => TRUE));
 
-return array("status" => TRUE);
+return array("status" => TRUE, "affected_row" => 1);
