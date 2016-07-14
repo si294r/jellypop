@@ -43,7 +43,7 @@ $documents = $db->User->find($filter, $options);
 $result['status'] = TRUE;
 $result['currentUser'] = bson_document_to_array($document);
 $result['topPlayer'] = bson_documents_to_array($documents);
-$result['count_friend'] = count($friends);
+//$result['count_friend'] = count($friends);
 
 $score = isset($document->score) ? $document->score : 0;
 $count1 = $db->User->count(array(
