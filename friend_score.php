@@ -16,15 +16,22 @@ if (!is_object($document)) {
    die;
 }
 
-$url = "https://graph.facebook.com/v2.6/$facebook_id/friends?access_token={$config['facebook_token']}";
+$friends = array();
+$filter_friends = array($facebook_id);
+$url = "https://graph.facebook.com/v2.7/$facebook_id/friends?access_token={$config['facebook_token']}&limit=50";
+
+get_facebook_friends:
 $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
 
-$friends = array();
-$filter_friends = array($facebook_id);
 foreach ($json_facebook->data as $v) {
     $friends[$v->id] = $v->name;
     $filter_friends[] = $v->id;
+}
+
+if (isset($json_facebook->paging->next)) {
+    $url = $json_facebook->paging->next;
+    goto get_facebook_friends;
 }
 
 $filter = array('score' => array('$gt' => 0), 'facebook_id' => array('$in' => $filter_friends));
@@ -36,6 +43,7 @@ $documents = $db->User->find($filter, $options);
 $result['status'] = TRUE;
 $result['currentUser'] = bson_document_to_array($document);
 $result['topPlayer'] = bson_documents_to_array($documents);
+$result['count_friend'] = count($friends);
 
 $score = isset($document->score) ? $document->score : 0;
 $count1 = $db->User->count(array(
