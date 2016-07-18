@@ -25,4 +25,8 @@ if (is_object($document)) {
 
 //echo json_encode(array("status" => TRUE));
 
-return array("status" => TRUE, "affected_row" => 1);
+return array(
+    "status" => TRUE, 
+    "affected_row" => 1,
+    "currentUser" => bson_document_to_array($document)
+    );
