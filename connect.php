@@ -23,10 +23,12 @@ if (is_object($document)) {
     $db->User->insertOne($data);
 }
 
+$new_document = $db->User->findOne([ 'facebook_id' => $data['facebook_id'] ]);
+
 //echo json_encode(array("status" => TRUE));
 
 return array(
     "status" => TRUE, 
     "affected_row" => 1,
-    "currentUser" => bson_document_to_array($document)
+    "currentUser" => bson_document_to_array($new_document)
     );
