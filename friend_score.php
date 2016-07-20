@@ -64,6 +64,8 @@ $friends[$facebook_id] = $json_facebook2->$facebook_id->name;
 
 $result['currentUser']['name'] = $json_facebook2->$facebook_id->name;
 $result['currentUser']['rank'] = $count1 + $count2;
+$result['currentUser']['count1'] = $count1;
+$result['currentUser']['count2'] = $count2;
 
 $i = 1;
 foreach ($result['topPlayer'] as $k=>$v) {
