@@ -16,7 +16,7 @@ if (!is_object($document)) {
    die;
 }
 
-$filter = array('score' => array('$gt' => 0));
+$filter = array('score' => array('$gte' => 0));
 $sort = array('score' => -1, 'facebook_id' => -1); // desc(-1), asc(1)
 $options = array('sort' => $sort, 'limit' => (int) $limit);
 
