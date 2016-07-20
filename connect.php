@@ -20,6 +20,9 @@ if (is_object($document)) {
     $db->User->updateOne(['_id' => bson_oid((string) $document->_id)], ['$set' => $data]);
 } else {
     $data['created_date'] = date('Y-m-d H:i:s');
+    if (!isset($data['score'])) {
+        $data['score'] = 0;
+    }
     $db->User->insertOne($data);
 }
 
