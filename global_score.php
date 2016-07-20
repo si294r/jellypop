@@ -30,9 +30,6 @@ $score = isset($document->score) ? $document->score : 0;
 $count1 = $db->User->count(array('score' => array('$gt' => $score)));
 $count2 = $db->User->count(array('score' => array('$eq' => $score), 'facebook_id' => array('$gte' => $facebook_id)));
 
-$result['currentUser']['name'] = 'YOU';
-$result['currentUser']['rank'] = $count1 + $count2;
-
 $i = 1;
 $facebook_ids = array();
 foreach ($result['topPlayer'] as $k=>$v) {
@@ -45,6 +42,9 @@ foreach ($result['topPlayer'] as $k=>$v) {
 $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=" . $config['facebook_token'];
 $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
+
+$result['currentUser']['name'] = $json_facebook->$facebook_ids->name;
+$result['currentUser']['rank'] = $count1 + $count2;
 
 foreach ($result['topPlayer'] as $k=>$v) {
     $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebook_id']->name;

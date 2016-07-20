@@ -56,14 +56,14 @@ $count2 = $db->User->count(array(
                                 'facebook_id' => array('$gte' => $facebook_id)
                             ));
 
-$result['currentUser']['name'] = 'YOU';
-$result['currentUser']['rank'] = $count1 + $count2;
-
 $url2 = "https://graph.facebook.com/?ids=" . $facebook_id . "&access_token=" . $config['facebook_token'];
 $result_facebook2 = file_get_contents($url2);
 $json_facebook2 = json_decode($result_facebook2);
 
 $friends[$facebook_id] = $json_facebook2->$facebook_id->name;
+
+$result['currentUser']['name'] = $json_facebook2->$facebook_id->name;
+$result['currentUser']['rank'] = $count1 + $count2;
 
 $i = 1;
 foreach ($result['topPlayer'] as $k=>$v) {

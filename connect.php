@@ -24,11 +24,13 @@ if (is_object($document)) {
 }
 
 $new_document = $db->User->findOne([ 'facebook_id' => $data['facebook_id'] ]);
+$currentUser = bson_document_to_array($new_document);
+if (!isset($currentUser['score'])) $currentUser['score'] = 0;
 
 //echo json_encode(array("status" => TRUE));
 
 return array(
     "status" => TRUE, 
     "affected_row" => 1,
-    "currentUser" => bson_document_to_array($new_document)
+    "currentUser" => $currentUser
     );
