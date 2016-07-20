@@ -52,9 +52,9 @@ $count1 = $db->User->count(array(
                             ));
 $count2 = $db->User->count(array( '$and' => 
                                 array(
-                                    'facebook_id' => array('$in' => $filter_friends), 
-                                    'score' => array('$eq' => $score), 
-                                    'facebook_id' => array('$gte' => $facebook_id)
+                                    array('facebook_id' => array('$in' => $filter_friends)), 
+                                    array('score' => array('$eq' => $score)), 
+                                    array('facebook_id' => array('$gte' => $facebook_id))
                                 )
                             ));
 
