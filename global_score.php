@@ -31,7 +31,7 @@ $count1 = $db->User->count(array('score' => array('$gt' => $score)));
 $count2 = $db->User->count(array('score' => array('$eq' => $score), 'facebook_id' => array('$gte' => $facebook_id)));
 
 $i = 1;
-$facebook_ids = array();
+$facebook_ids = array($facebook_id);
 foreach ($result['topPlayer'] as $k=>$v) {
 //    $result['topPlayer'][$k]['name'] = 'Player '.$i;
     $facebook_ids[] = $v['facebook_id'];
@@ -43,7 +43,7 @@ $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&acce
 $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
 
-$result['currentUser']['name'] = $json_facebook->$facebook_ids->name;
+$result['currentUser']['name'] = $json_facebook->$facebook_id->name;
 $result['currentUser']['rank'] = $count1 + $count2;
 
 foreach ($result['topPlayer'] as $k=>$v) {
