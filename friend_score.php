@@ -50,10 +50,12 @@ $count1 = $db->User->count(array(
                                 'facebook_id' => array('$in' => $filter_friends), 
                                 'score' => array('$gt' => $score)
                             ));
-$count2 = $db->User->count(array(
-                                'facebook_id' => array('$in' => $filter_friends), 
-                                'score' => array('$eq' => $score), 
-                                'facebook_id' => array('$gte' => $facebook_id)
+$count2 = $db->User->count(array( '$and' => 
+                                array(
+                                    'facebook_id' => array('$in' => $filter_friends), 
+                                    'score' => array('$eq' => $score), 
+                                    'facebook_id' => array('$gte' => $facebook_id)
+                                )
                             ));
 
 $url2 = "https://graph.facebook.com/?ids=" . $facebook_id . "&access_token=" . $config['facebook_token'];
