@@ -45,7 +45,7 @@ $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&acce
 $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
 
-$result['currentUser']['name'] = $json_facebook->$facebook_id->name;
+$result['currentUser']['name'] = isset($json_facebook->$facebook_id->name) ? $json_facebook->$facebook_id->name : "N/A";
 $result['currentUser']['rank'] = $count1 + $count2;
 
 foreach ($result['topPlayer'] as $k=>$v) {
