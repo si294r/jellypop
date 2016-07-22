@@ -34,7 +34,9 @@ $i = 1;
 $facebook_ids = array($facebook_id);
 foreach ($result['topPlayer'] as $k=>$v) {
 //    $result['topPlayer'][$k]['name'] = 'Player '.$i;
-    $facebook_ids[] = $v['facebook_id'];
+    if (trim($v['facebook_id']) != "") {
+        $facebook_ids[] = $v['facebook_id'];
+    }
     $result['topPlayer'][$k]['rank'] = $i;
     $i++;
 }
@@ -47,7 +49,9 @@ $result['currentUser']['name'] = $json_facebook->$facebook_id->name;
 $result['currentUser']['rank'] = $count1 + $count2;
 
 foreach ($result['topPlayer'] as $k=>$v) {
-    $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebook_id']->name;
+    if (trim($v['facebook_id']) != "") {
+        $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebook_id']->name;
+    }
 }
 
 //echo json_encode($result);
