@@ -49,8 +49,10 @@ $result['currentUser']['name'] = $json_facebook->$facebook_id->name;
 $result['currentUser']['rank'] = $count1 + $count2;
 
 foreach ($result['topPlayer'] as $k=>$v) {
-    if (trim($v['facebook_id']) != "") {
+    if (trim($v['facebook_id']) != "" && isset($json_facebook->$v['facebook_id']->name)) {
         $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebook_id']->name;
+    } else {
+        $result['topPlayer'][$k]['name'] = "N/A";
     }
 }
 
