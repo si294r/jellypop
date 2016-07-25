@@ -18,7 +18,7 @@ if (!is_object($document)) {
 
 function get_friend_score($result) {
 
-    global $document;
+    global $document, $db, $facebook_id, $limit;
     
     $friends = array();
     $filter_friends = array($facebook_id);
