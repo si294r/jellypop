@@ -16,7 +16,7 @@ if (!is_object($document)) {
     die;
 }
 
-function get_friend_score($result) {
+function get_friend_score(&$result) {
 
     global $document, $db, $facebook_id, $limit;
     
@@ -84,6 +84,6 @@ function get_friend_score($result) {
 
 $result = array('friend'=>array(), 'global'=>array());
 
-get_friend_score($result);
+get_friend_score($result['friend']);
 
 return $result;
