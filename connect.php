@@ -15,7 +15,7 @@ $data['country'] = isset($json->country) ? $json->country : "";
 if ($data['facebook_id'] == "") {
     
     return array(
-        "status" => FASLE,
+        "status" => FALSE,
         "affected_row" => 0,
         "message" => "Error: facebook_id is empty"
     );
