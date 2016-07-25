@@ -59,6 +59,7 @@ switch ($service) {
 //        }
 //        include('friend_score.php');
 //        break;
+    case 'leaderboard' :
     case 'global_score' :
 //        if ($_SERVER["REQUEST_METHOD"] != 'GET') {
 //            show_error(405, "405 Method Not Allowed", "Invalid Method");
