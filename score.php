@@ -15,7 +15,7 @@ $document = $db->User->findOne([ 'facebook_id' => $data['facebook_id'] ]);
 
 $affected_row = 0;
 if (is_object($document)) {
-    if ($data['score'] > $document->score) {
+    if ($data['score'] > $document->score || (isset($json->overwrite) && $json->overwrite == true)) {
         $data['updated_date'] = date('Y-m-d H:i:s');
         $db->User->updateOne(['_id' => bson_oid((string) $document->_id)], ['$set' => $data]);
         $affected_row = 1;
