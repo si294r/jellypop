@@ -26,7 +26,7 @@ function get_global_score(&$result) {
 
     $documents = $db->User->find($filter, $options);
 
-    $result['status'] = TRUE;
+//    $result['status'] = TRUE;
     $result['currentUser'] = bson_document_to_array($document);
     $result['topPlayer'] = bson_documents_to_array($documents);
 
