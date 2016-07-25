@@ -16,10 +16,55 @@ if (!is_object($document)) {
     die;
 }
 
+function get_global_score(&$result) {
+
+    global $config, $document, $db, $facebook_id, $limit;
+
+    $filter = array('score' => array('$gte' => 0));
+    $sort = array('score' => -1, 'facebook_id' => -1); // desc(-1), asc(1)
+    $options = array('sort' => $sort, 'limit' => (int) $limit);
+
+    $documents = $db->User->find($filter, $options);
+
+    $result['status'] = TRUE;
+    $result['currentUser'] = bson_document_to_array($document);
+    $result['topPlayer'] = bson_documents_to_array($documents);
+
+    $score = isset($document->score) ? $document->score : 0;
+    $count1 = $db->User->count(array('score' => array('$gt' => $score)));
+    $count2 = $db->User->count(array('score' => array('$eq' => $score), 'facebook_id' => array('$gte' => $facebook_id)));
+
+    $i = 1;
+    $facebook_ids = array($facebook_id);
+    foreach ($result['topPlayer'] as $k => $v) {
+//    $result['topPlayer'][$k]['name'] = 'Player '.$i;
+        if (trim($v['facebook_id']) != "") {
+            $facebook_ids[] = $v['facebook_id'];
+        }
+        $result['topPlayer'][$k]['rank'] = $i;
+        $i++;
+    }
+
+    $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=" . $config['facebook_token'];
+    $result_facebook = file_get_contents($url);
+    $json_facebook = json_decode($result_facebook);
+
+    $result['currentUser']['name'] = isset($json_facebook->$facebook_id->name) ? $json_facebook->$facebook_id->name : "N/A";
+    $result['currentUser']['rank'] = $count1 + $count2;
+
+    foreach ($result['topPlayer'] as $k => $v) {
+        if (trim($v['facebook_id']) != "" && isset($json_facebook->$v['facebook_id']->name)) {
+            $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebook_id']->name;
+        } else {
+            $result['topPlayer'][$k]['name'] = "N/A";
+        }
+    }
+}
+
 function get_friend_score(&$result) {
 
     global $config, $document, $db, $facebook_id, $limit;
-    
+
     $friends = array();
     $filter_friends = array($facebook_id);
     $url = "https://graph.facebook.com/v2.7/$facebook_id/friends?access_token={$config['facebook_token']}&limit=50";
@@ -70,9 +115,6 @@ function get_friend_score(&$result) {
 
     $result['currentUser']['name'] = $json_facebook2->$facebook_id->name;
     $result['currentUser']['rank'] = $count1 + $count2;
-//$result['currentUser']['count1'] = $count1;
-//$result['currentUser']['count2'] = $count2;
-//$result['currentUser']['filter_friends'] = $filter_friends;
 
     $i = 1;
     foreach ($result['topPlayer'] as $k => $v) {
@@ -82,8 +124,9 @@ function get_friend_score(&$result) {
     }
 }
 
-$result = array('friend'=>array(), 'global'=>array());
+$result = array('status' => true, 'global' => array(), 'friend' => array());
 
+get_global_score($result['global']);
 get_friend_score($result['friend']);
 
 return $result;
