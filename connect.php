@@ -12,7 +12,7 @@ $data['facebook_id'] = isset($json->facebook_id) ? $json->facebook_id : "";
 $data['token'] = isset($json->token) ? $json->token : "";
 $data['country'] = isset($json->country) ? $json->country : "";
 
-if ($data['facebook_id'] == "") {
+if (trim($data['facebook_id']) == "") {
     
     return array(
         "status" => FALSE,
