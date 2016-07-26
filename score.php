@@ -10,13 +10,11 @@ $data['facebook_id'] = isset($json->facebook_id) ? $json->facebook_id : "";
 $data['score'] = isset($json->score) ? $json->score : 0;
 
 if (trim($data['facebook_id']) == "") {
-    
     return array(
         "status" => FALSE,
         "affected_row" => 0,
         "message" => "Error: facebook_id is empty"
     );
-    
 }
 
 $db = get_mongodb(IS_DEVELOPMENT);
