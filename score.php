@@ -20,6 +20,7 @@ if (trim($data['facebook_id']) == "") {
 }
 
 $db = get_mongodb(IS_DEVELOPMENT);
+
 $document = $db->User->findOne([ 'facebook_id' => $data['facebook_id']]);
 
 $affected_row = 0;
