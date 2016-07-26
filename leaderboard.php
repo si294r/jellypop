@@ -19,8 +19,7 @@ $db = get_mongodb(IS_DEVELOPMENT);
 $document = $db->User->findOne([ 'facebook_id' => $facebook_id]);
 
 if (!is_object($document)) {
-    echo json_encode(array("status" => FALSE, "message" => "User not found"));
-    die;
+    return array("status" => FALSE, "message" => "User not found");
 }
 
 function get_global_score(&$result) {
