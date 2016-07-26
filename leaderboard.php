@@ -4,10 +4,17 @@ defined('IS_DEVELOPMENT') OR exit('No direct script access allowed');
 
 require 'mongodb_helper.php';
 
-$db = get_mongodb(IS_DEVELOPMENT);
-
 $facebook_id = isset($params[1]) ? $params[1] : "";
 $limit = isset($params[2]) ? $params[2] : 50;
+
+if (trim($data['facebook_id']) == "") {
+    return array(
+        "status" => FALSE,
+        "message" => "Error: facebook_id is empty"
+    );
+}
+
+$db = get_mongodb(IS_DEVELOPMENT);
 
 $document = $db->User->findOne([ 'facebook_id' => $facebook_id]);
 
