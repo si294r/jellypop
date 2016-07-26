@@ -11,6 +11,16 @@ $json = json_decode($input);
 $data['facebook_id'] = isset($json->facebook_id) ? $json->facebook_id : "";
 $data['score'] = isset($json->score) ? $json->score : 0;
 
+if (trim($data['facebook_id']) == "") {
+    
+    return array(
+        "status" => FALSE,
+        "affected_row" => 0,
+        "message" => "Error: facebook_id is empty"
+    );
+    
+}
+
 $document = $db->User->findOne([ 'facebook_id' => $data['facebook_id']]);
 
 $affected_row = 0;
@@ -22,7 +32,7 @@ if (is_object($document)) {
     }
     return array("status" => TRUE, "affected_row" => $affected_row);
 } else {
-   return array("status" => FALSE, "message" => "User not found"); 
+   return array("status" => FALSE, "affected_row" => $affected_row, "message" => "User not found"); 
 }
 
 //echo json_encode(array("status" => TRUE));
