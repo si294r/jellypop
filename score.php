@@ -22,8 +22,7 @@ if (is_object($document)) {
     }
     return array("status" => TRUE, "affected_row" => $affected_row);
 } else {
-   echo json_encode(array("status" => FALSE, "message" => "User not found")); 
-   die;
+   return array("status" => FALSE, "message" => "User not found"); 
 }
 
 //echo json_encode(array("status" => TRUE));
