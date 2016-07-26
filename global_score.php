@@ -7,7 +7,7 @@ require 'mongodb_helper.php';
 $facebook_id = isset($params[1]) ? $params[1] : "";
 $limit = isset($params[2]) ? $params[2] : 50;
         
-if (trim($data['facebook_id']) == "") {
+if (trim($facebook_id) == "") {
     return array(
         "status" => FALSE,
         "message" => "Error: facebook_id is empty"
