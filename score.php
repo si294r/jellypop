@@ -2,6 +2,8 @@
 
 defined('IS_DEVELOPMENT') OR exit('No direct script access allowed');
 
+require 'mongodb_helper.php';
+
 $json = json_decode($input);
 
 $data['facebook_id'] = isset($json->facebook_id) ? $json->facebook_id : "";
@@ -14,8 +16,6 @@ if (trim($data['facebook_id']) == "") {
         "message" => "Error: facebook_id is empty"
     );
 }
-
-require 'mongodb_helper.php';
 
 $db = get_mongodb(IS_DEVELOPMENT);
 
