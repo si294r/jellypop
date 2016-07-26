@@ -11,7 +11,7 @@ $json = json_decode($input);
 $data['facebook_id'] = isset($json->facebook_id) ? $json->facebook_id : "";
 $data['score'] = isset($json->score) ? $json->score : 0;
 
-$document = $db->User->findOne([ 'facebook_id' => $data['facebook_id'] ]);
+$document = $db->User->findOne([ 'facebook_id' => $data['facebook_id']]);
 
 $affected_row = 0;
 if (is_object($document)) {
@@ -20,12 +20,11 @@ if (is_object($document)) {
         $db->User->updateOne(['_id' => bson_oid((string) $document->_id)], ['$set' => $data]);
         $affected_row = 1;
     }
+    return array("status" => TRUE, "affected_row" => $affected_row);
 } else {
-    $data['created_date'] = date('Y-m-d H:i:s');
-    $db->User->insertOne($data);
-    $affected_row = 1;
+   echo json_encode(array("status" => FALSE, "message" => "User not found")); 
+   die;
 }
 
 //echo json_encode(array("status" => TRUE));
 
-return array("status" => TRUE, "affected_row" => $affected_row);
