@@ -7,7 +7,7 @@ require 'mongodb_helper.php';
 $json = json_decode($input);
 
 $data['facebook_id'] = isset($json->facebook_id) ? $json->facebook_id : "";
-$data['score'] = isset($json->score) ? $json->score : 0;
+$data['score'] = (isset($json->score) && $json->score >= 0) ? $json->score : 0;
 
 if (trim($data['facebook_id']) == "") {
     return array(
