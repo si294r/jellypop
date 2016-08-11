@@ -3,7 +3,7 @@
 $start_time = microtime(true);
 
 define('IS_DEVELOPMENT', FALSE);
-define('JELLY_POP_TOKEN', '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+require '/var/www/token.php';
 
 function show_error($response_code, $status_code, $message) {
     http_response_code($response_code);
