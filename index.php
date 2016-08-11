@@ -17,6 +17,7 @@ if (function_exists("getallheaders")) {
     $headers = getallheaders();
 } else {
     $headers['Jelly-Pop-Token'] = $_SERVER["HTTP_JELLY_POP_TOKEN"];
+    $headers['Content-Type'] = $_SERVER["CONTENT_TYPE"];
 }
 if (!isset($headers['Jelly-Pop-Token']) || $headers['Jelly-Pop-Token'] != JELLY_POP_TOKEN) {
     show_error(401, "401 Unauthorized", "Invalid Token");
