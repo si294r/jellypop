@@ -22,6 +22,25 @@ if (!is_object($document)) {
     return array("status" => FALSE, "message" => "User not found");
 }
 
+function display_name_exists($value) {
+    return isset($value['display_name']) && trim($value['display_name']) != "";
+}
+
+function display_name_expired($value) {
+    if (!isset($value['display_name'])) {
+        return true;
+    }
+    if (trim($value['display_name']) == "") {
+        return true;
+    }
+    $tgl = new DateTime($value['display_name_updated_date'], new DateTimeZone("GMT"));
+    $expired_date =  gmdate("Y-m-d H:i:s", $tgl->modify("+1 day")->getTimestamp());
+    if (gmdate("Y-m-d H:i:s") > $expired_date) {
+        return true;
+    }
+    return false;
+}
+
 function get_global_score(&$result) {
 
     global $config, $document, $db, $facebook_id, $limit;
@@ -41,26 +60,49 @@ function get_global_score(&$result) {
     $count2 = $db->User->count(array('score' => array('$eq' => $score), 'facebook_id' => array('$gte' => $facebook_id)));
 
     $i = 1;
-    $facebook_ids = array($facebook_id);
+    $facebook_ids = [];
+    if (display_name_expired($result['currentUser'])) {
+        $facebook_ids[] = $facebook_id;
+    }
     foreach ($result['topPlayer'] as $k => $v) {
 //    $result['topPlayer'][$k]['name'] = 'Player '.$i;
         if (trim($v['facebook_id']) != "") {
-            $facebook_ids[] = $v['facebook_id'];
+            if (display_name_expired($v)) {
+                $facebook_ids[] = $v['facebook_id'];
+            }
         }
         $result['topPlayer'][$k]['rank'] = $i;
         $i++;
     }
 
-    $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=" . $config['facebook_token'];
-    $result_facebook = file_get_contents($url);
-    $json_facebook = json_decode($result_facebook);
+    if (count($facebook_ids) > 0) {
+        $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=" . $config['facebook_token'];
+        $result_facebook = file_get_contents($url);
+        $json_facebook = json_decode($result_facebook);
+    }
 
-    $result['currentUser']['name'] = isset($json_facebook->$facebook_id->name) ? $json_facebook->$facebook_id->name : "N/A";
+    if (isset($json_facebook->$facebook_id->name)) {
+        $result['currentUser']['name'] = $json_facebook->$facebook_id->name;
+        // update display_name
+        $data['display_name'] = $json_facebook->$facebook_id->name;
+        $data['display_name_updated_date'] = gmdate('Y-m-d H:i:s');
+        $db->User->updateOne(['_id' => bson_oid((string) $result['currentUser']['_id'])], ['$set' => $data]);
+    } elseif (display_name_exists($result['currentUser'])) {
+        $result['currentUser']['name'] = $result['currentUser']['display_name'];
+    } else {
+        $result['currentUser']['name'] = "N/A";
+    }
     $result['currentUser']['rank'] = $count1 + $count2;
 
     foreach ($result['topPlayer'] as $k => $v) {
         if (trim($v['facebook_id']) != "" && isset($json_facebook->$v['facebook_id']->name)) {
             $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebook_id']->name;
+            // update display_name
+            $data['display_name'] = $json_facebook->$v['facebook_id']->name;
+            $data['display_name_updated_date'] = gmdate('Y-m-d H:i:s');
+            $db->User->updateOne(['_id' => bson_oid((string) $v['_id'])], ['$set' => $data]);
+        } elseif (display_name_exists($v)) {
+            $result['topPlayer'][$k]['name'] = $v['display_name'];
         } else {
             $result['topPlayer'][$k]['name'] = "N/A";
         }
@@ -113,13 +155,26 @@ function get_friend_score(&$result) {
         )
     ));
 
-    $url2 = "https://graph.facebook.com/?ids=" . $facebook_id . "&access_token=" . $config['facebook_token'];
-    $result_facebook2 = file_get_contents($url2);
-    $json_facebook2 = json_decode($result_facebook2);
+    if (display_name_expired($result['currentUser'])) {
+        $url2 = "https://graph.facebook.com/?ids=" . $facebook_id . "&access_token=" . $config['facebook_token'];
+        $result_facebook2 = file_get_contents($url2);
+        $json_facebook2 = json_decode($result_facebook2);
+    }
 
-    $friends[$facebook_id] = $json_facebook2->$facebook_id->name;
-
-    $result['currentUser']['name'] = $json_facebook2->$facebook_id->name;
+    if (isset($json_facebook2->$facebook_id->name)) {
+        $friends[$facebook_id] = $json_facebook2->$facebook_id->name;
+        $result['currentUser']['name'] = $json_facebook2->$facebook_id->name;
+        // update display_name
+        $data['display_name'] = $json_facebook2->$facebook_id->name;
+        $data['display_name_updated_date'] = gmdate('Y-m-d H:i:s');
+        $db->User->updateOne(['_id' => bson_oid((string) $result['currentUser']['_id'])], ['$set' => $data]);        
+    } elseif (display_name_exists($result['currentUser'])) {
+        $friends[$facebook_id] = $result['currentUser']['display_name'];
+        $result['currentUser']['name'] = $result['currentUser']['display_name'];
+    } else {
+        $friends[$facebook_id] = "N/A";
+        $result['currentUser']['name'] = "N/A";
+    }
     $result['currentUser']['rank'] = $count1 + $count2;
 
     $i = 1;
