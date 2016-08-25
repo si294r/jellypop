@@ -93,6 +93,7 @@ function get_global_score(&$result) {
         $result['currentUser']['name'] = "N/A";
     }
     $result['currentUser']['rank'] = $count1 + $count2;
+    if ($result['currentUser']['rank'] > 99) $result['currentUser']['rank'] = 99;
 
     foreach ($result['topPlayer'] as $k => $v) {
         if (trim($v['facebook_id']) != "" && isset($json_facebook->$v['facebook_id']->name)) {
@@ -176,6 +177,7 @@ function get_friend_score(&$result) {
         $result['currentUser']['name'] = "N/A";
     }
     $result['currentUser']['rank'] = $count1 + $count2;
+    if ($result['currentUser']['rank'] > 99) $result['currentUser']['rank'] = 99;
 
     $i = 1;
     foreach ($result['topPlayer'] as $k => $v) {
